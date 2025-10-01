@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Lightbulb, Search } from 'lucide-react';
+import { Lightbulb, Search, AlertTriangle, RefreshCw } from 'lucide-react';
 import { Idea } from '@/lib/api';
 import { IdeaCard } from './idea-card';
 
@@ -20,6 +20,8 @@ interface IdeasGridProps {
   isLoading: boolean;
   searchQuery: string;
   totalCount: number;
+  loadError?: string | null;
+  onRetry?: () => void;
 }
 
 export function IdeasGrid({
@@ -30,6 +32,8 @@ export function IdeasGrid({
   isLoading,
   searchQuery,
   totalCount,
+  loadError,
+  onRetry,
 }: IdeasGridProps) {
   if (isLoading) {
     return (
@@ -40,6 +44,38 @@ export function IdeasGrid({
           className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full mx-auto"
         />
       </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="text-center py-20"
+      >
+        <div className="w-24 h-24 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <AlertTriangle className="w-12 h-12 text-red-400" />
+        </div>
+        <h3 className="text-2xl font-bold text-white mb-4">Unable to Load Ideas</h3>
+        <p className="text-white/70 text-lg mb-8 max-w-md mx-auto">
+          {loadError.includes('rate limit') 
+            ? 'Too many requests. Please wait a moment and try again.' 
+            : loadError
+          }
+        </p>
+        {onRetry && (
+          <motion.button
+            onClick={onRetry}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white hover:bg-white/20 transition-all duration-200"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <RefreshCw className="w-4 h-4" />
+            Try Again
+          </motion.button>
+        )}
+      </motion.div>
     );
   }
 

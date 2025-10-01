@@ -19,20 +19,26 @@ export default function AppPage() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isPolling, setIsPolling] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const loadIdeas = useCallback(async (silent = false) => {
     try {
-      if (!silent) setIsLoading(true);
+      if (!silent) {
+        setIsLoading(true);
+        setLoadError(null);
+      }
       const data = await ideaService.getAll();
       setIdeas(data);
+      setLoadError(null);
     } catch (error) {
       console.error('Failed to load ideas:', error);
+      const errorMessage = error instanceof ApiError 
+        ? error.message 
+        : 'Failed to load ideas. Please try again.';
+      
       if (!silent) {
-        const errorMessage = error instanceof ApiError 
-          ? error.message 
-          : 'Failed to load ideas. Please try again.';
-        
+        setLoadError(errorMessage);
         toast({
           title: "Error",
           description: errorMessage,
@@ -44,32 +50,27 @@ export default function AppPage() {
     }
   }, [toast]);
 
-  // Initial load
   useEffect(() => {
     loadIdeas();
   }, [loadIdeas]);
 
-  // Set up live polling after initial load
   useEffect(() => {
     if (!isLoading) {
       setIsPolling(true);
     }
   }, [isLoading]);
 
-  // Live polling hook
   useLivePolling(
-    () => loadIdeas(true), // Silent polling
+    () => loadIdeas(true), 
     {
-      interval: 3000, // Poll every 3 seconds
+      interval: 3000,
       enabled: isPolling,
       pauseOnHidden: true,
     }
   );
 
-  // Detect changes for animations
   const { getChangeForIdea } = useIdeaChanges(ideas);
 
-  // Filter and sort ideas
   const {
     searchQuery,
     setSearchQuery,
@@ -200,6 +201,8 @@ export default function AppPage() {
             isLoading={isLoading}
             searchQuery={searchQuery}
             totalCount={totalCount}
+            loadError={loadError}
+            onRetry={() => loadIdeas(false)}
           />
         </div>
       </div>

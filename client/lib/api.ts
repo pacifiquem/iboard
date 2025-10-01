@@ -46,13 +46,19 @@ async function apiRequest<T>(
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       
-      // Extract meaningful error message
       let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
       if (errorData.error) {
         errorMessage = errorData.error;
       } else if (errorData.details && Array.isArray(errorData.details)) {
-        // Handle validation errors
         errorMessage = errorData.details.map((detail: any) => detail.msg).join(', ');
+      }
+      
+      if (response.status === 429) {
+        errorMessage = 'Too many requests. Please wait a moment before trying again.';
+      } else if (response.status >= 500) {
+        errorMessage = 'Server is temporarily unavailable. Please try again later.';
+      } else if (response.status === 404) {
+        errorMessage = 'The requested resource was not found.';
       }
       
       throw new ApiError(errorMessage, response.status);
@@ -89,7 +95,6 @@ export const ideaService = {
     return response.data;
   },
 
-  // Upvote an idea
   async upvote(id: string): Promise<void> {
     await apiRequest<ApiResponse<null>>('/ideas/upvote', {
       method: 'POST',
@@ -97,7 +102,6 @@ export const ideaService = {
     });
   },
 
-  // Downvote an idea
   async downvote(id: string): Promise<void> {
     await apiRequest<ApiResponse<null>>('/ideas/downvote', {
       method: 'POST',
