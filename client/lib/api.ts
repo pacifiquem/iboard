@@ -1,7 +1,4 @@
-const API_BASE_URL = typeof window !== 'undefined' 
-  ? (window as any).ENV?.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
-  : 'http://localhost:3001/api';
-
+const API_BASE_URL = window.location.origin === 'http://localhost:3000' ? 'http://localhost:3001/api' : 'https://iboard.onrender.com/api';
 export interface Idea {
   id: string;
   text: string;
