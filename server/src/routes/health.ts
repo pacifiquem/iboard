@@ -4,6 +4,78 @@ import logger from '../config/logger';
 
 const router = Router();
 
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Health check endpoint
+ *     description: Check the health status of the API and its dependencies
+ *     tags: [Health]
+ *     responses:
+ *       200:
+ *         description: Service is healthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: healthy
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   example: 2024-01-01T12:00:00Z
+ *                 uptime:
+ *                   type: number
+ *                   example: 3600.5
+ *                 responseTime:
+ *                   type: string
+ *                   example: 15ms
+ *                 environment:
+ *                   type: string
+ *                   example: development
+ *                 version:
+ *                   type: string
+ *                   example: 1.0.0
+ *                 services:
+ *                   type: object
+ *                   properties:
+ *                     database:
+ *                       type: string
+ *                       example: up
+ *                     server:
+ *                       type: string
+ *                       example: up
+ *                 memory:
+ *                   type: object
+ *                   properties:
+ *                     used:
+ *                       type: number
+ *                       example: 45.67
+ *                     total:
+ *                       type: number
+ *                       example: 128.00
+ *                     external:
+ *                       type: number
+ *                       example: 2.34
+ *       503:
+ *         description: Service is unhealthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: unhealthy
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 error:
+ *                   type: string
+ *                   example: Database connection failed
+ */
 router.get('/', async (req: Request, res: Response) => {
   try {
     const startTime = Date.now();
@@ -47,6 +119,45 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /health/ready:
+ *   get:
+ *     summary: Readiness check endpoint
+ *     description: Check if the service is ready to accept requests
+ *     tags: [Health]
+ *     responses:
+ *       200:
+ *         description: Service is ready
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: ready
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   example: 2024-01-01T12:00:00Z
+ *       503:
+ *         description: Service is not ready
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: not ready
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 reason:
+ *                   type: string
+ *                   example: Database connection failed
+ */
 router.get('/ready', async (req: Request, res: Response) => {
   try {
     const dbHealthy = await testConnection();
@@ -73,6 +184,32 @@ router.get('/ready', async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /health/live:
+ *   get:
+ *     summary: Liveness check endpoint
+ *     description: Check if the service is alive and responding
+ *     tags: [Health]
+ *     responses:
+ *       200:
+ *         description: Service is alive
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: alive
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   example: 2024-01-01T12:00:00Z
+ *                 uptime:
+ *                   type: number
+ *                   example: 3600.5
+ */
 router.get('/live', (req: Request, res: Response) => {
   res.status(200).json({
     status: 'alive',

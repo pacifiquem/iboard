@@ -18,6 +18,7 @@ import {
   compression,
 } from './middleware/security';
 import { generalLimiter, speedLimiter } from './middleware/rateLimiter';
+import { setupSwagger } from './config/swagger';
 import apiRoutes from './routes';
 
 const app = express();
@@ -43,6 +44,9 @@ app.use(sanitizeRequest);
 app.use(morgan('combined', { stream: morganStream }));
 app.use(requestLogger);
 
+// Setup Swagger documentation
+setupSwagger(app);
+
 app.use('/api', apiRoutes);
 
 app.get('/', (req, res) => {
@@ -55,6 +59,7 @@ app.get('/', (req, res) => {
       api: '/api',
       health: '/api/health',
       ideas: '/api/ideas',
+      docs: '/api-docs',
     },
   });
 });
@@ -104,6 +109,7 @@ const server = app.listen(PORT, async () => {
   logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
   logger.info(`API available at: http://localhost:${PORT}/api`);
   logger.info(`Health check: http://localhost:${PORT}/api/health`);
+  logger.info(`API Documentation: http://localhost:${PORT}/api-docs`);
   
   // Test database connection on startup
   const dbConnected = await testConnection();
