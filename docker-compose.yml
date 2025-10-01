@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # Server (API)
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: iboard-server
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "3001:3001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Client (Next.js)
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: iboard-client
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+
+networks:
+  default:
+    name: iboard-network
