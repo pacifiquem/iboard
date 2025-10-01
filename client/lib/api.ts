@@ -1,4 +1,4 @@
-const API_BASE_URL = window.location.origin === 'http://localhost:3000' ? 'http://localhost:3001/api' : 'https://iboard.onrender.com/api';
+const API_BASE_URL = 'https://iboard.onrender.com/api';
 export interface Idea {
   id: string;
   text: string;
