@@ -28,8 +28,10 @@ app.set('trust proxy', 1);
 
 // Security middleware
 app.use(helmetConfig);
-app.use(cors(corsOptions));
 app.use(compression());
+if (process.env.NODE_ENV === 'production') {
+  app.use(cors(corsOptions));
+}
 
 // Rate limiting and speed limiting
 app.use(generalLimiter);
