@@ -8,8 +8,10 @@ import { ideaService, type Idea, ApiError } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useLivePolling } from '@/hooks/use-live-polling';
 import { useIdeaChanges } from '@/hooks/use-idea-changes';
+import { useIdeaFilters } from '@/hooks/use-idea-filters';
 import { IdeaInput } from '@/components/idea-input';
-import { IdeaCard } from '@/components/idea-card';
+import { IdeaFilters } from '@/components/idea-filters';
+import { IdeasGrid } from '@/components/ideas-grid';
 import { AnimatedGradient } from '@/components/animated-gradient';
 import { LiveIndicator } from '@/components/live-indicator';
 
@@ -66,6 +68,17 @@ export default function AppPage() {
 
   // Detect changes for animations
   const { getChangeForIdea } = useIdeaChanges(ideas);
+
+  // Filter and sort ideas
+  const {
+    searchQuery,
+    setSearchQuery,
+    sortBy,
+    setSortBy,
+    filteredIdeas,
+    totalCount,
+    filteredCount,
+  } = useIdeaFilters(ideas);
 
   const handleSubmit = async (text: string) => {
     try {
@@ -170,38 +183,24 @@ export default function AppPage() {
             <IdeaInput onSubmit={handleSubmit} />
           </div>
 
-          {isLoading ? (
-            <div className="text-center text-white/60 py-20">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full mx-auto"
-              />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {ideas.map((idea, index) => (
-                <IdeaCard
-                  key={idea.id}
-                  idea={idea}
-                  onUpvote={handleUpvote}
-                  onDownvote={handleDownvote}
-                  index={index}
-                  change={getChangeForIdea(idea.id)}
-                />
-              ))}
-            </div>
-          )}
+          <IdeaFilters
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            totalIdeas={totalCount}
+            filteredCount={filteredCount}
+          />
 
-          {!isLoading && ideas.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-20"
-            >
-              <p className="text-white/60 text-xl">No ideas yet. Be the first to share!</p>
-            </motion.div>
-          )}
+          <IdeasGrid
+            ideas={filteredIdeas}
+            onUpvote={handleUpvote}
+            onDownvote={handleDownvote}
+            getChangeForIdea={getChangeForIdea}
+            isLoading={isLoading}
+            searchQuery={searchQuery}
+            totalCount={totalCount}
+          />
         </div>
       </div>
     </>

@@ -85,8 +85,10 @@ export function IdeaCard({ idea, onUpvote, onDownvote, index, change }: IdeaCard
       className={`group relative ${change?.type === 'new' ? 'ring-2 ring-cyan-400/50' : ''}`}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl blur-sm group-hover:blur-md transition-all duration-300" />
-      <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-xl hover:bg-white/15 hover:border-white/30 transition-all duration-300">
-        <p className="text-white text-base leading-relaxed mb-4">{idea.text}</p>
+      <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-xl hover:bg-white/15 hover:border-white/30 transition-all duration-300 h-full flex flex-col">
+        <p className="text-white text-base leading-relaxed mb-4 flex-1 break-words overflow-hidden">
+          {idea.text}
+        </p>
         <div className="flex items-center justify-between">
           <div className="text-sm text-white/50">
             {new Date(idea.created_at).toLocaleDateString('en-US', {
