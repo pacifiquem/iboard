@@ -1,10 +1,9 @@
-# 🚀 iBoard - Real-Time Collaborative Idea Platform
+# iBoard - Real-Time Collaborative Idea Platform
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://iboard.onrender.com)
 [![API Docs](https://img.shields.io/badge/API-Documentation-blue)](https://iboard.onrender.com/api-docs)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://hub.docker.com)
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Project Overview](#-project-overview)
 - [Key Features](#-key-features)
@@ -20,7 +19,7 @@
 - [Deployment](#-deployment)
 - [Development Workflow](#-development-workflow)
 
-## 🎯 Project Overview
+## Project Overview
 
 iBoard is a **real-time collaborative idea platform**
 ### Part 1: Marketing Landing Page
