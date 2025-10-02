@@ -3,6 +3,8 @@
 [![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://iboard.onrender.com)
 [![API Docs](https://img.shields.io/badge/API-Documentation-blue)](https://iboard.onrender.com/api-docs)
 
+While checking this, open two windows side by side, interact with ideas listed or add new ones to see the real-time updates.
+
 ## Table of Contents
 
 - [Project Overview](#-project-overview)
